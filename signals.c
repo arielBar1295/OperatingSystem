@@ -16,7 +16,7 @@ int catch() {
     signal(SIGINT, catch);
     printf("PID %d caught one\n", getpid());
     if (j > -1)
-        kill(children[j], SIGINT);  
+        kill(children[j], SIGINT);
 }
 
 int main(){
@@ -35,8 +35,9 @@ int main(){
             pause();
             exit(0);
         }
-        else
+        else {
             children[i] = pid;    //update the array
+        }
     }
     sleep(2);
     //start sending signals
