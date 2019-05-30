@@ -3,15 +3,15 @@
 #include <signal.h>
 #include <stdlib.h>
 #include<sys/wait.h>
-int cpid[5];         // holds the pids of the children
-int j;                    // index to cpid 
+//for children
+int cpid[5];         
+int j;                    
 
-// function to activate when a signal is caught
-void sigCatcher() {
-    signal(SIGINT, sigCatcher);  // re-assign the signal catcher
+void catch() {
+    signal(SIGINT, catch);  
     printf("PID %d caught one\n", getpid());
     if (j > -1)
-        kill(cpid[j], SIGINT);  // send signal to next child in cpid
+        kill(cpid[j], SIGINT); 
 }
 
 int main(){
@@ -19,22 +19,23 @@ int main(){
     int zombie;
     int status;
     int pid;
-    signal(SIGINT, sigCatcher);    // sets a handler for INT signal
+    signal(SIGINT, catch);    
     for(i=0; i<5; i++){
-        if((pid=fork()) ==  0){      		// create new child
+        if((pid=fork()) ==  0){      
             printf("PID %d ready\n", getpid());
             j = i-1;
-            pause(); 			// wait for signal
-            exit(0);  			// end process (become a zombie)
+            pause(); 			// wait 
+            exit(0);  		
         }
-        else            			// Only father updates the cpid array.
+        else            		
             cpid[i] = pid;
     }
-    sleep(2);     			// allow children time to enter pause
-    kill(cpid[4], SIGINT);     		// send signal to first child
-    sleep(2);                 			// wait for children to become zombies
+    sleep(2); 
+    //send signals to the first child 
+    kill(cpid[4], SIGINT);     		
+    sleep(2);                 			
     for(i=0; i<5; i++){
-        zombie = wait(&status); 		// collect zombies
+        zombie = wait(&status); 		
         printf("%d is dead\n", zombie);
     }
     exit(0);
