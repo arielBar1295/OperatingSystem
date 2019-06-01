@@ -16,7 +16,7 @@ int ind;
 int catch() {
     signal(SIGINT, catch);  // re-assign the signal catcher
     printf("PID %d caught one\n", getpid());
-    if (j > -1) {
+    if (ind > -1) {
         kill(children[ind], SIGINT);
     }// send signal to next child in cpid
 }
