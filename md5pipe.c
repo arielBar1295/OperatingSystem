@@ -20,7 +20,7 @@ void validResult(int signal_number){
         exit(0);
     }
     else{
-        printf("no");
+        printf("didnt work");
     }
 
 }
