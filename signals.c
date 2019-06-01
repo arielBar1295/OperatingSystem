@@ -1,55 +1,46 @@
-#include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
-#include <sys/fcntl.h>
 #include <stdlib.h>
-#include <signal.h>
+#include <fcntl.h>
 #include <sys/uio.h>
 #include <sys/types.h>
 #include <unistd.h>
-//global
-//for holding the children.
-int children[5];
-//for tracking
-int ind;
+#include <signal.h>
+#include <sys/fcntl.h>
+int cpid[5];         // holds the pids of the children
+int j;                    // index to cpid 
 
-// to know when a signal is caught.
-int catch() {
-    signal(SIGINT, catch);
+// function to activate when a signal is caught
+int sigCatcher() {
+    signal(SIGINT, sigCatcher);  // re-assign the signal catcher
     printf("PID %d caught one\n", getpid());
-    if (ind > -1) {
-        kill(children[ind], SIGINT);
-    }
+    if (j > -1) {
+        kill(cpid[j], SIGINT);
+    }// send signal to next child in cpid
 }
-
-int main(){
-
+int main() {
+    int i;
     int zombie;
     int status;
     int pid;
-    // a hendler
-    signal(SIGINT, catch);
-    int j;
-    //creating the children
-    for(j=0; j<5; j++){
-        if((pid=fork()) ==  0){
+    signal(SIGINT, sigCatcher);
+    for(i=0; i<5; i++){
+        if((pid=fork()) ==  0){      		// create new child
             printf("PID %d ready\n", getpid());
-            ind = j-1;
-            pause();
-            exit(0);
+            j = i-1;
+            pause(); 			// wait for signal
+            exit(0);  			// end process (become a zombie)
         }
-        else {
-            children[j] = pid;    //update the array
+        else {                // Only father updates the cpid array.
+            cpid[i] = pid;
         }
     }
-    sleep(2);
-    //start sending signals
-    kill(children[4], SIGINT);
-    sleep(2);
-    for(j=0; j<5; j++){
-        zombie = wait(&status);
-        printf("%d is dead\n", zombie);
+    sleep(2);     			// allow children time to enter pause
+    kill(cpid[4], SIGINT);     		// send signal to first child
+    sleep(2);                 			// wait for children to become zombies
+    for(i=0; i<5; i++){
+        zombie = wait(&status); 		// collect zombies
+        printf("Process %d is dead\n", zombie);
     }
     exit(0);
-
 }
