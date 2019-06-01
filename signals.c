@@ -11,8 +11,8 @@ int cpid[5];         // holds the pids of the children
 int j;                    // index to cpid 
 
 // function to activate when a signal is caught
-int sigCatcher() {
-    signal(SIGINT, sigCatcher);  // re-assign the signal catcher
+int catch() {
+    signal(SIGINT, catch);  // re-assign the signal catcher
     printf("PID %d caught one\n", getpid());
     if (j > -1) {
         kill(cpid[j], SIGINT);
@@ -23,7 +23,7 @@ int main() {
     int zombie;
     int status;
     int pid;
-    signal(SIGINT, sigCatcher);
+    signal(SIGINT, catch);
     for(i=0; i<5; i++){
         if((pid=fork()) ==  0){      		// create new child
             printf("PID %d ready\n", getpid());
