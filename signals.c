@@ -17,31 +17,36 @@ int catch() {
     signal(SIGINT, catch); 
     printf("PID %d caught one\n", getpid());
     if (ind >= 0) {
+        //sends ignal to the brother
         kill(children[ind], SIGINT);
     }
 }
 int main() {
-    int i;
     int zombie;
-    int status;
     int pid;
+    int j;
+    int status;
+    //a hendler
     signal(SIGINT, catch);
-    for(i=0; i<5; i++){
-        if((pid=fork()) ==  0){      		// create new child
+    //creating the children
+    for(j=0; j<5; j++){
+        if((pid=fork()) ==  0){      		
             printf("PID %d ready\n", getpid());
-            ind = i-1;
-            pause(); 			// wait for signal
-            exit(0);  			// end process (become a zombie)
+            ind = j-1;
+            pause(); 			
+            exit(0);  			
         }
-        else {                // Only father updates the cpid array.
-            children[i] = pid;
+        else {  
+            //update the children array
+            children[j] = pid;
         }
     }
-    sleep(2);     			// allow children time to enter pause
-    kill(children[4], SIGINT);     		// send signal to first child
-    sleep(2);                 			// wait for children to become zombies
+    sleep(2); 
+    //send a signal to the child.
+    kill(children[4], SIGINT);     		
+    sleep(2);                 			
     for(i=0; i<5; i++){
-        zombie = wait(&status); 		// collect zombies
+        zombie = wait(&status); 		
         printf("Process %d is dead\n", zombie);
     }
     exit(0);
