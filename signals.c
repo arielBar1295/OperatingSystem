@@ -12,13 +12,13 @@ int children[5];
 //for tracking the chikdren
 int ind;                    
 
-// function to activate when a signal is caught
+// to know when a signal is caught.
 int catch() {
-    signal(SIGINT, catch);  // re-assign the signal catcher
+    signal(SIGINT, catch); 
     printf("PID %d caught one\n", getpid());
-    if (ind > -1) {
+    if (ind >= 0) {
         kill(children[ind], SIGINT);
-    }// send signal to next child in cpid
+    }
 }
 int main() {
     int i;
