@@ -45,7 +45,7 @@ int main() {
     //send a signal to the child.
     kill(children[4], SIGINT);     		
     sleep(2);                 			
-    for(i=0; i<5; i++){
+    for(j=0; j<5; j++){
         zombie = wait(&status); 		
         printf("Process %d is dead\n", zombie);
     }
